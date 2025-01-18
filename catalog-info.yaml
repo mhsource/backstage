@@ -1,8 +1,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-s3-bucket-testando-1
-  title: "Criar Bucket S3 testando1"
+  name: create-s3-bucket-testando
+  title: "Criar Bucket S3 testando"
   description: "Provisiona um bucket S3 usando CloudFormation"
 spec:
   owner: team-example
@@ -16,12 +16,10 @@ spec:
       description: "O nome do Stack que será provisionado via CloudFormation."
       type: string
       name: stackName
-
     - title: "Nome do Bucket"
       description: "Nome do Bucket que será criado."
       type: string
       name: bucketName
-
   steps:
     - id: deploy-stack
       name: "Implantando Stack CloudFormation"
