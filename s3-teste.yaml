@@ -9,20 +9,20 @@ spec:
   parameters:
     - title: "Região AWS"
       type: string         # <-- precisa ser "string"
-      name: Region         # <-- nome do parâmetro
+      name: region         # <-- nome do parâmetro
     - title: "Nome do Stack"
       type: string
-      name: StackName
+      name: stackName
     - title: "Nome do Bucket"
       type: string
-      name: BucketName
+      name: bucketName
 steps:
     - id: deploy-stack
       name: "Implantando Stack CloudFormation"
       action: "aws:cloudFormationDeploy"
       input:
-        region: ${{ parameters.Region }}
-        stackName: ${{ parameters.StackName }}
+        region: ${{ parameters.region }}
+        stackName: ${{ parameters.stackName }}
         template: |
           AWSTemplateFormatVersion: "2010-09-09"
           Description: "Template para criar um Bucket S3"
@@ -42,4 +42,4 @@ steps:
               Value: !Ref S3Bucket
 
         templateParameters:
-          BucketName: ${{ parameters.BucketName }}
+          BucketName: ${{ parameters.bucketName }}
