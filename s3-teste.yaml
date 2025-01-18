@@ -1,22 +1,32 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-s3-bucket-testeee
-  title: "Criar Bucket S3 testeee"
+  name: create-s3-bucket-testando
+  title: "Criar Bucket S3 testando"
+  description: "Provisiona um bucket S3 usando CloudFormation"
 spec:
   owner: team-example
   type: service
   parameters:
     - title: "Região AWS"
-      type: string         # <-- precisa ser "string"
-      name: region         # <-- nome do parâmetro
+      description: "A região AWS onde o Stack CloudFormation será criado."
+      type: string
+      name: region
+      default: "us-east-1"
+
     - title: "Nome do Stack"
+      description: "O nome do Stack que será provisionado via CloudFormation."
       type: string
       name: stackName
+      default: "demo-s3-bucket-stack"
+
     - title: "Nome do Bucket"
+      description: "Nome do Bucket que será criado."
       type: string
       name: bucketName
-steps:
+      default: "minha-demo-bucket"
+
+  steps:
     - id: deploy-stack
       name: "Implantando Stack CloudFormation"
       action: "aws:cloudFormationDeploy"
@@ -40,6 +50,12 @@ steps:
             S3BucketName:
               Description: "Nome do bucket S3"
               Value: !Ref S3Bucket
-
         templateParameters:
           BucketName: ${{ parameters.bucketName }}
+
+  output:
+    links:
+      - type: url
+        icon: docs
+        title: "Console AWS - CloudFormation"
+        url: "https://console.aws.amazon.com/cloudformation/home"
