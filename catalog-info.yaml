@@ -1,0 +1,45 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: provision-cloudformation-resources
+  title: Provisionamento de Recursos AWS
+  description: Provisiona Lambda, S3 Bucket e SQS com base em parâmetros fornecidos.
+  tags:
+    - aws
+    - cloudformation
+  annotations:
+    backstage.io/managed-by-location: url:https://github.com/your-org/repo/catalog-info.yaml
+spec:
+  owner: equipe-devops
+  type: aws-provisioning
+  parameters:
+    - title: Configurações de Recursos AWS
+      required:
+        - region
+        - prefix
+      properties:
+        region:
+          title: Região
+          type: string
+          enum:
+            - us-east-1
+            - us-west-1
+          description: Região onde os recursos serão provisionados.
+        prefix:
+          title: Prefixo
+          type: string
+          description: Prefixo para o nome dos recursos.
+  steps:
+    - id: deploy-cloudformation
+      name: Deploy CloudFormation Stack
+      action: aws:cloudformation:deploy
+      input:
+        stackName: "${{ parameters.prefix }}-stack"
+        region: "${{ parameters.region }}"
+        template: |
+          AWSTemplateFormatVersion: '2010-09-09'
+          Resources:
+            ExampleResource:
+              Type: AWS::S3::Bucket
+              Properties:
+                BucketName: !Sub "${{ parameters.prefix }}-bucket"
