@@ -1,45 +1,64 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: provision-cloudformation-resources
-  title: Provisionamento de Recursos AWS
-  description: Provisiona Lambda, S3 Bucket e SQS com base em parâmetros fornecidos.
-  tags:
-    - aws
-    - cloudformation
-  annotations:
-    backstage.io/managed-by-location: url:https://github.com/your-org/repo/catalog-info.yaml
+  name: create-s3-bucket
+  title: "Criar Bucket S3"
+  description: "Provisiona um bucket S3 usando CloudFormation"
 spec:
-  owner: equipe-devops
-  type: aws-provisioning
+  owner: team-example
+  type: service
   parameters:
-    - title: Configurações de Recursos AWS
-      required:
-        - region
-        - prefix
-      properties:
-        region:
-          title: Região
-          type: string
-          enum:
-            - us-east-1
-            - us-west-1
-          description: Região onde os recursos serão provisionados.
-        prefix:
-          title: Prefixo
-          type: string
-          description: Prefixo para o nome dos recursos.
+    - title: "Região AWS"
+      type: string
+      optional: false
+      default: "us-east-1"
+      description: "A região AWS onde o Stack CloudFormation será criado."
+      name: region
+    - title: "Nome do Stack"
+      type: string
+      optional: false
+      default: "demo-s3-bucket-stack"
+      description: "O nome do Stack que será provisionado via CloudFormation."
+      name: stackName
+    - title: "Nome do Bucket"
+      type: string
+      optional: false
+      default: "minha-demo-bucket"
+      description: "Nome do Bucket que será criado."
+      name: bucketName
+
   steps:
-    - id: deploy-cloudformation
-      name: Deploy CloudFormation Stack
-      action: aws:cloudformation:deploy
+    - id: deploy-stack
+      name: "Implantando Stack CloudFormation"
+      action: "aws:cloudFormationDeploy"
       input:
-        stackName: "${{ parameters.prefix }}-stack"
-        region: "${{ parameters.region }}"
+        # Região na qual o stack será implantado
+        region: ${{ parameters.region }}
+        # Nome do stack
+        stackName: ${{ parameters.stackName }}
+        # Template CloudFormation (incluímos inline, mas poderia ser referenciado de um arquivo externo)
         template: |
-          AWSTemplateFormatVersion: '2010-09-09'
+          AWSTemplateFormatVersion: "2010-09-09"
+          Description: "Template para criar um Bucket S3"
           Resources:
-            ExampleResource:
-              Type: AWS::S3::Bucket
+            S3Bucket:
+              Type: "AWS::S3::Bucket"
               Properties:
-                BucketName: !Sub "${{ parameters.prefix }}-bucket"
+                BucketName: !Sub "${BucketName}"
+          Parameters:
+            BucketName:
+              Type: String
+          Outputs:
+            S3BucketName:
+              Description: "Nome do bucket S3"
+              Value: !Ref S3Bucket
+        # Passando parâmetro do bucket para o template
+        templateParameters:
+          BucketName: ${{ parameters.bucketName }}
+
+  output:
+    links:
+      - type: url
+        icon: docs
+        title: "Console AWS - CloudFormation"
+        url: "https://console.aws.amazon.com/cloudformation/home"
