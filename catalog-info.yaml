@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-s3-bucket
+  name: create-s3-bucket-dt
   title: "Criar Bucket S3"
 spec:
   owner: team-example
