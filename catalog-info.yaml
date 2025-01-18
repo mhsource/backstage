@@ -1,34 +1,45 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-s3-bucket-dt
-  title: "Criar Bucket S3"
+  name: create-s3-bucket-testeee
+  title: "Criar Bucket S3 testeee"
 spec:
   owner: team-example
   type: service
   parameters:
     - title: "Região AWS"
       type: string         # <-- precisa ser "string"
-      name: region         # <-- nome do parâmetro
-      description: "A região AWS onde o Stack CloudFormation será criado"
-      default: "us-east-1"
+      name: Region         # <-- nome do parâmetro
     - title: "Nome do Stack"
       type: string
-      name: stackName
-      default: "demo-s3-bucket-stack"
+      name: StackName
     - title: "Nome do Bucket"
       type: string
-      name: bucketName
-      default: "minha-demo-bucket"
-
-  steps:
+      name: BucketName
+steps:
     - id: deploy-stack
       name: "Implantando Stack CloudFormation"
       action: "aws:cloudFormationDeploy"
       input:
-        region: ${{ parameters.region }}
-        stackName: ${{ parameters.stackName }}
+        region: ${{ parameters.Region }}
+        stackName: ${{ parameters.StackName }}
         template: |
-          ...
+          AWSTemplateFormatVersion: "2010-09-09"
+          Description: "Template para criar um Bucket S3"
+          Resources:
+            S3Bucket:
+              Type: "AWS::S3::Bucket"
+              Properties:
+                BucketName: !Sub "${BucketName}"
+
+          Parameters:
+            BucketName:
+              Type: String
+
+          Outputs:
+            S3BucketName:
+              Description: "Nome do bucket S3"
+              Value: !Ref S3Bucket
+
         templateParameters:
-          BucketName: ${{ parameters.bucketName }}
+          BucketName: ${{ parameters.BucketName }}
