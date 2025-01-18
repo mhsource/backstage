@@ -3,62 +3,32 @@ kind: Template
 metadata:
   name: create-s3-bucket
   title: "Criar Bucket S3"
-  description: "Provisiona um bucket S3 usando CloudFormation"
 spec:
   owner: team-example
   type: service
   parameters:
     - title: "Região AWS"
-      type: string
-      optional: false
+      type: string         # <-- precisa ser "string"
+      name: region         # <-- nome do parâmetro
+      description: "A região AWS onde o Stack CloudFormation será criado"
       default: "us-east-1"
-      description: "A região AWS onde o Stack CloudFormation será criado."
-      name: region
     - title: "Nome do Stack"
       type: string
-      optional: false
-      default: "demo-s3-bucket-stack"
-      description: "O nome do Stack que será provisionado via CloudFormation."
       name: stackName
+      default: "demo-s3-bucket-stack"
     - title: "Nome do Bucket"
       type: string
-      optional: false
-      default: "minha-demo-bucket"
-      description: "Nome do Bucket que será criado."
       name: bucketName
+      default: "minha-demo-bucket"
 
   steps:
     - id: deploy-stack
       name: "Implantando Stack CloudFormation"
       action: "aws:cloudFormationDeploy"
       input:
-        # Região na qual o stack será implantado
         region: ${{ parameters.region }}
-        # Nome do stack
         stackName: ${{ parameters.stackName }}
-        # Template CloudFormation (incluímos inline, mas poderia ser referenciado de um arquivo externo)
         template: |
-          AWSTemplateFormatVersion: "2010-09-09"
-          Description: "Template para criar um Bucket S3"
-          Resources:
-            S3Bucket:
-              Type: "AWS::S3::Bucket"
-              Properties:
-                BucketName: !Sub "${BucketName}"
-          Parameters:
-            BucketName:
-              Type: String
-          Outputs:
-            S3BucketName:
-              Description: "Nome do bucket S3"
-              Value: !Ref S3Bucket
-        # Passando parâmetro do bucket para o template
+          ...
         templateParameters:
           BucketName: ${{ parameters.bucketName }}
-
-  output:
-    links:
-      - type: url
-        icon: docs
-        title: "Console AWS - CloudFormation"
-        url: "https://console.aws.amazon.com/cloudformation/home"
